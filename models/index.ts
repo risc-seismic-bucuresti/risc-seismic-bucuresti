@@ -7,6 +7,7 @@ import { Dialect } from 'sequelize';
 // config
 import { config } from "../config";
 
+export * from './building-rating.model';
 export * from './building.model';
 
 // this captures all models exported above

@@ -43,7 +43,4 @@ export class Building extends EditableModel<Building> {
 
   @Column({ type: DataType.STRING, field: 'comments', allowNull: false })
   public comments: string;
-
-  @Column({ type: DataType.STRING, field: 'seismic_degree', allowNull: false })
-  public seismicDegree: string;
 }
