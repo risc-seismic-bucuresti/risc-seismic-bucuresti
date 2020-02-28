@@ -12,6 +12,11 @@
   "dependencies": {
     "async-redis": "^1.1.7",
     "chalk": "^3.0.0",
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-mount": "^4.0.0",
+    "koa-router": "^8.0.8",
+    "koa-validate": "^1.0.7",
     "lodash": "^4.17.15",
     "mkdirp": "^1.0.3",
     "pg": "^7.18.2",
@@ -23,6 +28,7 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "@types/koa-router": "^7.4.0",
     "@types/node": "^13.7.6",
     "pdf-table-extractor": "^1.0.3"
   }
