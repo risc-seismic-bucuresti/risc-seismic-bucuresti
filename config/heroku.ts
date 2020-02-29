@@ -1,6 +1,6 @@
 export const config = {
   web: {
-    port: 3040,
+    port: 80,
   },
   db: {
     host: '***REMOVED***',
