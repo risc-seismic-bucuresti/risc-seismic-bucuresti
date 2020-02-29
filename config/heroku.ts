@@ -1,7 +1,4 @@
 export const config = {
-  web: {
-    port: 80,
-  },
   db: {
     host: 'ec2-54-247-125-38.eu-west-1.compute.amazonaws.com',
     username: 'zcnzsjdjhpngyh',
