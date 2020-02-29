@@ -1,7 +1,4 @@
 export const config = {
-  web: {
-    port: 80,
-  },
   db: {
     host: '***REMOVED***',
     username: '***REMOVED***',

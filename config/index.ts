@@ -13,7 +13,7 @@ export const config = {
   version: '1.0.0',
 
   web: {
-    port: 3040,
+    port: process.env.PORT || 3040,
     forceSsl: (process.env.FORCE_SSL === 'true') || false,
     docs: {
       apiDocsEnabled: (process.env.API_DOCS === 'true') || true,
