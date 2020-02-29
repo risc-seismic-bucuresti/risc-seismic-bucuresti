@@ -1,8 +1,9 @@
 //npm
-import { Column, DataType, Table } from "sequelize-typescript";
+import { Column, DataType, HasMany, Table } from "sequelize-typescript";
 
 // models
 import { EditableModel } from "./base";
+import { BuildingRating } from "./building-rating.model";
 
 @Table({
   tableName: 'buildings',
@@ -43,4 +44,7 @@ export class Building extends EditableModel<Building> {
 
   @Column({ type: DataType.STRING, field: 'comments', allowNull: false })
   public comments: string;
+
+  @HasMany(() => BuildingRating)
+  public buildingRatings: BuildingRating[];
 }

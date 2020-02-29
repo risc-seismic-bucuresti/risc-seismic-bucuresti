@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Op } from 'sequelize';
 
 // models
-import { Building } from "./models";
+import { Building, BuildingRating } from "./models";
 
 export class Routes extends KoaRouter {
   constructor() {
@@ -18,7 +18,10 @@ export class Routes extends KoaRouter {
           where: {
             address: { [Op.iLike]: `%${address}%` },
             addressNumber: { [Op.iLike]: `%${number}%` },
-          }
+          },
+          include: [{
+            model: BuildingRating,
+          }],
         });
         ctx.status = 200;
         ctx.body = buildings;

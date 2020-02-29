@@ -37,7 +37,7 @@ function getValues(table: any) {
   return {
     number: table[1],
     streetType: table[2],
-    address: table[3],
+    address: table[3].normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
     addressNumber: table[4],
     district: table[5],
     apartmentNumber: cleanNumber(table[6]),
