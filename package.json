@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node node_modules/ts-node/dist/bin.js --ignore false app.ts",
     "import": "node node_modules/ts-node/dist/bin.js --ignore false scripts/data-import.ts"
   },
   "author": "",

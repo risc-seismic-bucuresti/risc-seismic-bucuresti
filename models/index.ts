@@ -30,6 +30,7 @@ export const sql = new Sequelize({
   benchmark: config.db.benchmark,
   logging: config.db.logging,
   define: { charset: 'utf8' },
+  dialectOptions: { ssl: config.db.ssl },
 });
 
 sql.addModels(models);
