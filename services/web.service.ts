@@ -1,5 +1,6 @@
 // npm
 import * as Koa from 'koa';
+import * as cors from 'kcors';
 import * as bodyParser from 'koa-bodyparser';
 import * as mount from 'koa-mount';
 import * as KoaRouter from 'koa-router';
@@ -26,6 +27,8 @@ export class WebService {
     app.use(bodyParser({ extendTypes: { json: ['text/plain'] } }));
 
     validate(app);
+
+    app.use(cors());
 
     app.use(WebService.errorHandler);
 
