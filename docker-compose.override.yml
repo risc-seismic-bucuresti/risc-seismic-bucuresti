@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  api:
+    image: rsbw
+    build: .
+    volumes:
+      - .:/code
+    entrypoint: ["/usr/bin/tail", "-f", "/dev/null"]
+
+  web:
+    environment:
+      - REACT_APP_API_URL=http://localhost:3040
+  db:
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+    driver: local

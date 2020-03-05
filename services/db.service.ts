@@ -26,14 +26,11 @@ export interface IDbConfig {
  * Manages the lifetime and initialization of the database.
  */
 export class DbService {
-  constructor(private config: IDbConfig, private sanityCheckEnabled: boolean = true) {
+  constructor(private config: IDbConfig) {
   }
 
   public async initialize() {
     if (this.config.manageDatabase) {
-      // make sure we're only managing the lifetime of test databases
-      if (this.sanityCheckEnabled) this.sanityCheck();
-
       await this.createDb();
     }
 
@@ -63,14 +60,6 @@ export class DbService {
 
     if (this.config.manageDatabase) {
       await this.dropDb();
-    }
-  }
-
-  private sanityCheck() {
-    if (!/_test$/.test(this.config.database)) {
-      throw new Error('The test databases must contain `_test` at the end of their name. ' +
-        'The test scripts are not designed to run on an already populated database. ' +
-        'Set the app to use your local database before running the tests.');
     }
   }
 
