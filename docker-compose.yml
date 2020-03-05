@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  api:
+    image: rsc:latest
+    container_name: rsc.api
+    environment:
+      - NODE_ENV=docker
+    depends_on:
+      - db
+      - cache
+    ports:
+      - 3040:3040
+
+  web:
+    image: alexneamtu/rsbw:latest
+    container_name: rsc.web
+    ports:
+      - "3000:3000"
+  cache:
+    image: redis:rc-alpine
+    container_name: rsb.cache
+    ports:
+      - "6379:6379"
+
+  db:
+    image: postgres:alpine
+    container_name: rsb.db
+    environment:
+      - POSTGRES_DB=rsb
+      - POSTGRES_USER=rsb
+      - POSTGRES_PASSWORD=rsb
+      - PGPASSWORD=rsb
+      - TZ=Europe/Bucharest
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:
+    driver: local
