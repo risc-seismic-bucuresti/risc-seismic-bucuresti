@@ -9,6 +9,10 @@ services:
     entrypoint: ["/usr/bin/tail", "-f", "/dev/null"]
 
   web:
+    image: alexneamtu/rsbw:latest
+    container_name: rsc.web
+    ports:
+      - "3000:3000"
     environment:
       - REACT_APP_API_URL=http://localhost:3040
   db:
