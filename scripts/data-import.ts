@@ -6,7 +6,6 @@ import * as _ from 'lodash';
 import { config } from "../config";
 
 // service
-import { CacheService } from "../services/cache.service";
 import { DbService } from "../services/db.service";
 
 // models
@@ -52,16 +51,10 @@ function getValues(table: any) {
 
 (async () => {
   const dbService = new DbService(config.db)
-  const cacheService = CacheService.getInstance(config.cache.redis)
-  await cacheService.initialize();
   await dbService.initialize();
 
 
-  let data = await cacheService.getCache('data');
-  if (!data) {
-    data = await dataImport();
-    await cacheService.setCache('data', JSON.stringify(data))
-  }
+  let data = await dataImport();
 
   const tables = _.reduce(data.pageTables, (r, pageTable) => r.concat(pageTable.tables), [])
 
@@ -94,8 +87,6 @@ function getValues(table: any) {
       }
     }
   }
-
-  await cacheService.close();
 })();
 
 
