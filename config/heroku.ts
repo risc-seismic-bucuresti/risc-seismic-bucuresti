@@ -7,9 +7,4 @@ export const config = {
     manageDatabase: false,
     ssl: true,
   },
-  cache: {
-    redis: {
-      url: '***REMOVED***',
-    },
-  },
 }
