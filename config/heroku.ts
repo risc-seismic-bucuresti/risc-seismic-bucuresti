@@ -7,9 +7,4 @@ export const config = {
     manageDatabase: false,
     ssl: true,
   },
-  cache: {
-    redis: {
-      url: 'redis://h:p4aaaa8fa91742dcfef6e55a3d8a7e91afb919714ae03ff8f6c1c232335208b23@ec2-18-200-126-4.eu-west-1.compute.amazonaws.com:9059',
-    },
-  },
 }
