@@ -12,11 +12,6 @@ services:
     ports:
       - 3040:3040
 
-  web:
-    image: alexneamtu/rsbw:latest
-    container_name: rsc.web
-    ports:
-      - "3000:3000"
   cache:
     image: redis:rc-alpine
     container_name: rsb.cache
