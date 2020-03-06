@@ -7,6 +7,7 @@ import * as cors from 'kcors';
 import * as bodyParser from 'koa-bodyparser';
 import * as mount from 'koa-mount';
 import * as KoaRouter from 'koa-router';
+import { enforceHttps } from 'koa-sslify';
 import * as validate from 'koa-validate';
 import * as _ from 'lodash';
 
@@ -33,6 +34,7 @@ export class WebService {
   constructor(private config: IWebServerConfig, routers: KoaRouter[]) {
     const app = new Koa();
 
+    app.use(enforceHttps({ port: this.config.web.portSSL }));
     app.use(bodyParser({ extendTypes: { json: ['text/plain'] } }));
 
     validate(app);
@@ -58,8 +60,8 @@ export class WebService {
       const options = {
         key: fs.readFileSync(this.config.web.ssl.key),
         cert: fs.readFileSync(this.config.web.ssl.cert)
-      }
-      this.server = []
+      };
+      this.server = [];
       this.server.push(http.createServer(this.app.callback()).listen(this.config.web.port));
       this.server.push(https.createServer(options, this.app.callback()).listen(this.config.web.portSSL));
     } else {

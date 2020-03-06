@@ -14,7 +14,7 @@ export const config = {
   },
   web: {
     port: 80,
-    portSSL: 80,
+    portSSL: 443,
     ssl: {
       enabled: true,
       key: '/etc/letsencrypt/live/static.17.155.217.95.clients.your-server.de/fullchain.pem',
