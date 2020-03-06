@@ -14,7 +14,12 @@ export const config = {
 
   web: {
     port: parseInt(process.env.PORT, 10) || 3040,
-    forceSsl: (process.env.FORCE_SSL === 'true') || false,
+    portSSL: parseInt(process.env.PORT, 10) || 3041,
+    ssl: {
+      enabled: (process.env.SSL_ENABLED === 'true') || false,
+      key: process.env.SSL_KEY,
+      cert: process.env.SSL_CERT,
+    },
     docs: {
       apiDocsEnabled: (process.env.API_DOCS === 'true') || true,
     },
@@ -24,9 +29,6 @@ export const config = {
       secret: process.env.JWT_CONSUMER_SECRET || 'secret',
       accessTokenExpiration: process.env.JWT_CONSUMER_ACCESS_TOKEN_EXPIRATION || '+7d',
       refreshTokenExpiration: process.env.JWT_CONSUMER_REFRESH_TOKEN_EXPIRATION || '+30d',
-    },
-    graphQl: {
-      debug: (process.env.GRAPHQL_CONSUMER_DEBUG === 'true') || false,
     },
     resetTokenExpiration: process.env.CONSUMER_RESET_TOKEN_EXPIRATION || '24h',
   },

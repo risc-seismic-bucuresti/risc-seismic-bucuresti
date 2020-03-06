@@ -1,4 +1,7 @@
 // npm
+import * as fs from 'fs';
+import * as http from "http";
+import * as https from "https";
 import * as Koa from 'koa';
 import * as cors from 'kcors';
 import * as bodyParser from 'koa-bodyparser';
@@ -13,6 +16,12 @@ import { LogService as log } from './log.service';
 export interface IWebServerConfig {
   web: {
     port: number;
+    portSSL: number;
+    ssl: {
+      enabled: boolean,
+      key: string,
+      cert: string,
+    }
   };
 }
 
@@ -45,9 +54,19 @@ export class WebService {
   }
 
   public async listen() {
-    this.server = this.app.listen(this.config.web.port, () => {
-      log.info(`Listening on port ${this.config.web.port}...`);
-    });
+    if (this.config.web.ssl.enabled) {
+      const options = {
+        key: fs.readFileSync(this.config.web.ssl.key),
+        cert: fs.readFileSync(this.config.web.ssl.cert)
+      }
+      this.server = []
+      this.server.push(http.createServer(this.app.callback()).listen(this.config.web.port));
+      this.server.push(https.createServer(options, this.app.callback()).listen(this.config.web.portSSL));
+    } else {
+      this.server = this.app.listen(this.config.web.port, () => {
+        log.info(`Listening on port ${this.config.web.port}...`);
+      });
+    }
   }
 
   private static async errorHandler(ctx, next) {
