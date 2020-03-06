@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node node_modules/ts-node/dist/bin.js --ignore false app.ts",
-    "import": "node node_modules/ts-node/dist/bin.js --ignore false scripts/data-import.ts"
+    "import": "node node_modules/ts-node/dist/bin.js --ignore false scripts/data-import.ts",
+    "forever-start": "forever start  --minUptime 10000 --spinSleepTime 1000   node_modules/ts-node/dist/bin.js --ignore false app.ts",
+    "forever-stop": "forever stop 0"
   },
   "author": "",
   "license": "ISC",

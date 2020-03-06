@@ -17,8 +17,8 @@ export const config = {
     portSSL: 443,
     ssl: {
       enabled: true,
-      key: '/etc/letsencrypt/live/static.17.155.217.95.clients.your-server.de/fullchain.pem',
-      cert: '/etc/letsencrypt/live/static.17.155.217.95.clients.your-server.de/privkey.pem',
+      key: '/etc/letsencrypt/live/static.17.155.217.95.clients.your-server.de/privkey.pem',
+      cert: '/etc/letsencrypt/live/static.17.155.217.95.clients.your-server.de/fullchain.pem',
     }
   }
-}
+};
