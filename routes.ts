@@ -22,8 +22,20 @@ export class Routes extends KoaRouter {
       try {
         const address = _.get(ctx, 'request.query.address')
         const number = _.get(ctx, 'request.query.number')
+
+        const ip = ctx.request.headers['x-client-ip'] || ctx.request.ip
+        const ipCalls = await cacheService.getCache(ip);
+
+        if (!ipCalls) {
+          await cacheService.incrCache('unique-calls');
+        }
+
+        await cacheService.incrCache(ip);
+        await cacheService.incrCache('calls');
+
         let data = await cacheService.getCache(`${address}-${number}`);
         if (!data) {
+          await cacheService.incrCache('db-calls');
           const buildings = await Building.findAll({
             where: {
               address: { [Op.iLike]: `%${address}%` },
@@ -42,5 +54,17 @@ export class Routes extends KoaRouter {
         ctx.throw(400, err.message);
       }
     });
+
+    this.get('/stats', async (ctx) => {
+      try {
+        const calls = await cacheService.getCache('calls');
+        const dbCalls = await cacheService.getCache('db-calls');
+        const uniqueCalls = await cacheService.getCache('unique-calls');
+        ctx.status = 200;
+        ctx.body = { calls, dbCalls, uniqueCalls };
+      } catch (err) {
+        ctx.throw(400, err.message);
+      }
+    })
   }
 }

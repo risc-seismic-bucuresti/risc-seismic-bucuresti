@@ -43,6 +43,9 @@ export class CacheService {
     return this.redis.del(id);
   }
 
+  public async incrCache(id: string): Promise<number> {
+    return this.redis.incr(id);
+  }
 
 }
 
