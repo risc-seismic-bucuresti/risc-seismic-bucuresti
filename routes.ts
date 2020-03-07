@@ -40,7 +40,8 @@ export class Routes extends KoaRouter {
         let data = await cacheService.getCache(`${address}-${number}`);
         if (!data) {
           await cacheService.incrCache('db-calls');
-          const addressArray = address.split(/\W/);
+          let addressArray = address.split(/\W/);
+          addressArray = _.filter(addressArray, a => !['calea'].includes(a.toLowerCase()));
           const addressQuery = _.map(addressArray, (addressElement) => ({ [Op.iLike]: `%${addressElement}%` }));
           const buildings = await Building.findAll({
             where: {
