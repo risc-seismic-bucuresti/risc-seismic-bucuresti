@@ -4,13 +4,13 @@ import * as _ from 'lodash';
 import { Op } from 'sequelize';
 
 // models
-import { Building, BuildingRating } from "./models";
+import { Building, BuildingRating } from './models';
 
 // services
-import { CacheService } from "./services";
+import { CacheService } from './services';
 
 // config
-import { config } from "./config";
+import { config } from './config';
 
 const cacheService = CacheService.getInstance(config.cache.redis);
 
@@ -19,6 +19,7 @@ export class Routes extends KoaRouter {
     if (!input) return input;
     return input.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
+
   constructor() {
     super();
 
@@ -41,7 +42,10 @@ export class Routes extends KoaRouter {
         if (!data) {
           await cacheService.incrCache('db-calls');
           let addressArray = address.split(/\W/);
-          addressArray = _.filter(addressArray, a => !['calea', 'strada', 'intrare', 'aleea'].includes(a.toLowerCase()));
+          addressArray = _.filter(
+            addressArray,
+            a => !['calea', 'strada', 'intrarea', 'aleea', 'piata', 'splaiul', 'soseaua'].includes(a.toLowerCase()),
+          );
           const addressQuery = _.map(addressArray, (addressElement) => ({ [Op.iLike]: `%${addressElement}%` }));
           const buildings = await Building.findAll({
             where: {
