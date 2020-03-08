@@ -1,7 +1,7 @@
 // npm
 import * as KoaRouter from 'koa-router';
 import * as _ from 'lodash';
-import { Op } from 'sequelize';
+import { col, fn, Op, where } from 'sequelize';
 
 // models
 import { Building, BuildingRating } from './models';
@@ -42,15 +42,13 @@ export class Routes extends KoaRouter {
         if (!data) {
           await cacheService.incrCache('db-calls');
           let addressArray = address.split(/\W/);
-          addressArray = _.filter(
-            addressArray,
-            a => !['calea', 'strada', 'intrarea', 'aleea', 'piata', 'splaiul', 'soseaua'].includes(a.toLowerCase()),
-          );
-          const addressQuery = _.map(addressArray, (addressElement) => ({ [Op.iLike]: `%${addressElement}%` }));
+          const whereClause = [
+            where(fn('concat', col('street_type'), ' ', col('address')), { [Op.iLike]: `%${addressArray.join(' ')}%` }),
+          ];
+          if (number) whereClause.push({ addressNumber: { [Op.iLike]: `%${number}%` } } as any);
           const buildings = await Building.findAll({
             where: {
-              address: { [Op.or]: addressQuery },
-              addressNumber: { [Op.iLike]: `%${number}%` },
+              [Op.and]: whereClause,
             },
             include: [{
               model: BuildingRating,
