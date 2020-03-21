@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as request from 'request-promise-native';
 
 // models
-import { cleanNumber, cleanString, cleanup, finalize, initialize, seismicDegrees } from './helpers';
+import { cleanNumber, cleanString, cleanup, finalize, getGpsCoordinates, initialize, seismicDegrees } from './helpers';
 
 // models
 import { Building, BuildingRating } from '../models';
@@ -49,11 +49,15 @@ async function processData(domParser: DomParser, degree: string) {
       const rowFields = row.getElementsByTagName("td");
       const rowData = _.map(rowFields, rowField => rowField.childNodes.length ? cleanString(rowField.childNodes[0].text) : '');
       const addressParts = rowData[1].match(/^([A-Z][a-z]+) ([A-Z0-9 ]+.*)/);
+      const streetType = addressParts[1];
+      const address = cleanString(addressParts[2]);
+      const addressNumber = cleanString(rowData[2]);
+      const gpsCoordinates = await getGpsCoordinates(streetType, address, addressNumber);
       const building = await Building.create({
+        streetType,
+        address,
+        addressNumber,
         number: cleanNumber(rowData[0]),
-        streetType: addressParts[1],
-        address: cleanString(addressParts[2]),
-        addressNumber: rowData[2],
         district: rowData[3],
         apartmentNumber: cleanNumber(rowData[6]),
         heightRegime: rowData[5],
@@ -62,6 +66,8 @@ async function processData(domParser: DomParser, degree: string) {
         surfaceSize: cleanNumber(rowData[7]),
         expertName: rowData[9],
         comments: rowData[10],
+        gpsCoordinatesLatitude: _.get(gpsCoordinates, 'latitude'),
+        gpsCoordinatesLongitude: _.get(gpsCoordinates, 'longitude'),
       });
 
       await BuildingRating.create({
