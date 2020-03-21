@@ -8,7 +8,15 @@ import { config } from '../config';
 import { CacheService, DbService, LogService as log } from '../services';
 
 
-export const seismicDegrees = {1: 'RS1', 2: 'RS2', 3: 'RS3', 4: 'RS4', 5: 'CONSOLIDAT', 6: 'URGENTA', 7: 'NECLASIFICAT'};
+export const seismicDegrees = {
+  1: 'RS1',
+  2: 'RS2',
+  3: 'RS3',
+  4: 'RS4',
+  5: 'CONSOLIDAT',
+  6: 'URGENTA',
+  7: 'NECLASIFICAT'
+};
 
 export async function initialize(): Promise<void> {
   // Resetting db
@@ -47,5 +55,5 @@ export function cleanNumber(input: string): number {
 }
 
 export function cleanString(input: string): string {
-  return input.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return _.trim(input.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' '));
 }

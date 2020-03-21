@@ -3,9 +3,8 @@ import * as _ from 'lodash';
 import { Model, Sequelize } from "sequelize-typescript";
 import { Dialect } from 'sequelize';
 
-
-// config
-import { config } from "../config";
+// services
+import { IDbConfig } from '../services';
 
 export * from './building-rating.model';
 export * from './building.model';
@@ -13,24 +12,26 @@ export * from './building.model';
 // this captures all models exported above
 const models = _.values<typeof Model>(module.exports);
 
-export const sql = new Sequelize({
-  host: config.db.host,
-  port: config.db.port,
-  database: config.db.database,
-  dialect: config.db.dialect as Dialect,
-  username: config.db.username,
-  password: config.db.password,
-  pool: {
-    max: config.db.connectionLimit,
-    min: config.db.minimConnections,
-    idle: config.db.idle,
-    acquire: config.db.acquire,
-    evict: config.db.evict,
-  },
-  benchmark: config.db.benchmark,
-  logging: config.db.logging,
-  define: { charset: 'utf8' },
-  dialectOptions: { ssl: config.db.ssl },
-});
-
-sql.addModels(models);
+export const sql = (config) => {
+  const instance = new Sequelize({
+    host: config.host,
+    port: config.port,
+    database: config.database,
+    dialect: config.dialect as Dialect,
+    username: config.username,
+    password: config.password,
+    pool: {
+      max: config.connectionLimit,
+      min: config.minimConnections,
+      idle: config.idle,
+      acquire: config.acquire,
+      evict: config.evict,
+    },
+    benchmark: config.benchmark,
+    logging: config.logging as any,
+    define: { charset: 'utf8' },
+    dialectOptions: { ssl: config.ssl },
+  });
+  instance.addModels(models);
+  return instance;
+};
