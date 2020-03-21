@@ -3,50 +3,114 @@ import * as DomParser from 'dom-parser';
 import * as _ from 'lodash';
 import * as request from 'request-promise-native';
 
+// models
+import { cleanNumber, cleanString, cleanup, finalize, initialize, seismicDegrees } from './helpers';
 
 // models
-// import { Building, BuildingRating } from '../models';
-import { initialize, seismicDegrees } from './helpers';
+import { Building, BuildingRating } from '../models';
+
+// services
+import { LogService as log } from '../services';
 
 
 const baseUrl = 'https://amccrs-pmb.ro/cladiri/grad';
 
-async function loadData(): Promise<any> {
-  const domParser = new DomParser();
-  for (const degree in seismicDegrees) {
-    const degreeUrl = `${baseUrl}/${degree}`;
-    const content = await request.get(degreeUrl);
-    const html = domParser.parseFromString(content, 'text/html');
-    const table = html.getElementsByTagName('table');
-    if (table.length) {
-      const thead = table[0].getElementsByTagName('thead')[0];
-      const headerRow = thead.getElementsByTagName("tr")[0];
-      const headerFields = headerRow.getElementsByTagName("th");
-      console.log(_.map(headerFields, headerField => headerField.childNodes[0].text));
+const tableHeader = [
+  'Nr. crt.',
+  'Adresa',
+  'Nr',
+  'Sector',
+  'Anul construirii',
+  'Regimul de inaltime',
+  'Numar de apartamente',
+  'Aria desfasurata',
+  'Anul Elaborarii Expertizei Tehnice',
+  'Expertul tehnic atestat pentru cerinta esentiala de calitate-rezistenta mecanica si stabilitate de catre M.D.R.A.P.',
+  'Observatii',
+  'Clasa de risc seismic'
+];
 
-      // first item element of the childNodes list of mycel
-      //       myceltext=mycel.childNodes[0];
+async function processData(domParser: DomParser, degree: string) {
+  // Retrieving url content
+  const url = `${baseUrl}/${degree}`
+  log.info(`Processing: ${url}`);
+  const content = await request.get(`${baseUrl}/${degree}`);
 
-      // const tbody = table[0].getElementsByTagName('tbody');
+  // Parsing content html
+  const html = domParser.parseFromString(content, 'text/html');
 
+  // Finding table
+  const table = html.getElementsByTagName('table');
+  if (table.length == 1) {
+    checkTableHeader(table);
+    const rows = getTableRows(table);
+
+    for (const row of rows) {
+      const rowFields = row.getElementsByTagName("td");
+      const rowData = _.map(rowFields, rowField => rowField.childNodes.length ? cleanString(rowField.childNodes[0].text) : '');
+      const addressParts = rowData[1].match(/^([A-Z][a-z]+) ([A-Z0-9 ]+.*)/);
+      const building = await Building.create({
+        number: cleanNumber(rowData[0]),
+        streetType: addressParts[1],
+        address: cleanString(addressParts[2]),
+        addressNumber: rowData[2],
+        district: rowData[3],
+        apartmentNumber: cleanNumber(rowData[6]),
+        heightRegime: rowData[5],
+        yearOfConstruction: rowData[4],
+        yearOfExpertise: rowData[8],
+        surfaceSize: cleanNumber(rowData[7]),
+        expertName: rowData[9],
+        comments: rowData[10],
+      });
+
+      await BuildingRating.create({
+        seismicRating: seismicDegrees[degree],
+        buildingId: building.id,
+      });
     }
 
-
-
-
+  } else {
+    throw new Error(`Multiple tables found on ${url}`);
   }
-  return;
+}
+
+function checkTableHeader(table: Array<DomParser.Node>): Array<string> {
+  const thead = table[0].getElementsByTagName('thead')[0];
+  const headerRow = thead.getElementsByTagName("tr")[0];
+  const headerFields = headerRow.getElementsByTagName("th");
+  const header = _.map(headerFields, headerField => cleanString(headerField.childNodes[0].text));
+  if (!_.isEqual(header, tableHeader)) {
+    throw new Error('Table header changed.');
+  }
+  return header;
+}
+
+function getTableRows(table: Array<DomParser.Node>) {
+  const tbody = table[0].getElementsByTagName('tbody')[0];
+  const rows = tbody.getElementsByTagName("tr")
+  return rows;
 }
 
 async function dataImportFromSite(): Promise<any> {
-  return loadData();
+  const domParser = new DomParser();
+  for (const degree in seismicDegrees) {
+    await processData(domParser, degree);
+  }
+  return;
 }
 
 (async () => {
   await initialize();
 
-  // let data =
-  await dataImportFromSite();
+  try {
+    await dataImportFromSite();
+    await finalize();
+  } catch (e) {
+    log.error(`Error importing site: ${e.message}`);
+    await cleanup();
+  }
+
   process.exit();
 })();
 
