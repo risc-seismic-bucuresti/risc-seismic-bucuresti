@@ -45,6 +45,12 @@ export class Building extends EditableModel<Building> {
   @Column({ type: DataType.STRING, field: 'comments', allowNull: false })
   public comments: string;
 
+  @Column({ type: DataType.FLOAT, field: 'gps_coordinates_latitude' })
+  public gpsCoordinatesLatitude: number;
+
+  @Column({ type: DataType.FLOAT, field: 'gps_coordinates_longitude' })
+  public gpsCoordinatesLongitude: number;
+
   @HasMany(() => BuildingRating)
   public buildingRatings: BuildingRating[];
 }

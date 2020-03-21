@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { Building, BuildingRating } from '../models';
 
 // helpers
-import { cleanNumber, cleanString, cleanup, finalize, initialize, seismicDegrees } from './helpers';
+import { cleanNumber, cleanString, cleanup, finalize, getGpsCoordinates, initialize, seismicDegrees } from './helpers';
 
 // services
 import { LogService as log } from '../services';
@@ -25,12 +25,13 @@ async function dataImportFromCsv(): Promise<any> {
   return loadData();
 }
 
-function getValues(table: any) {
+async function getValues(table: any) {
+  const gpsCoordinates = await getGpsCoordinates(cleanString(table[2]), cleanString(table[3]), cleanString(table[4]));
   return {
     number: table[1],
-    streetType: table[2],
+    streetType: cleanString(table[2]),
     address: cleanString(table[3]),
-    addressNumber: table[4],
+    addressNumber: cleanString(table[4]),
     district: table[5],
     apartmentNumber: cleanNumber(table[6]),
     heightRegime: table[7],
@@ -39,6 +40,8 @@ function getValues(table: any) {
     surfaceSize: cleanNumber(table[10]),
     expertName: table[11],
     comments: table[12],
+    gpsCoordinatesLatitude: _.get(gpsCoordinates, 'latitude'),
+    gpsCoordinatesLongitude: _.get(gpsCoordinates, 'longitude'),
   };
 }
 
@@ -54,7 +57,7 @@ async function processCsvData(data) {
       continue;
     }
     if (seismicRating) {
-      const buildingObject = getValues(table);
+      const buildingObject = await getValues(table);
       if (new Set(table).size < 10) {
         Object.keys(buildingObject).forEach(key => [null, ''].includes(buildingObject[key]) && delete buildingObject[key]);
         Object.keys(buildingObject).forEach((key) => {
