@@ -1,5 +1,6 @@
 // npm
 import * as _ from 'lodash';
+import * as NodeGeocoder from 'node-geocoder';
 
 // config
 import { config } from '../config';
@@ -9,13 +10,13 @@ import { CacheService, DbService, LogService as log } from '../services';
 
 
 export const seismicDegrees = {
-  1: 'RS1',
-  2: 'RS2',
-  3: 'RS3',
+  // 1: 'RS1',
+  // 2: 'RS2',
+  // 3: 'RS3',
   4: 'RS4',
-  5: 'CONSOLIDAT',
-  6: 'URGENTA',
-  7: 'NECLASIFICAT'
+  // 5: 'CONSOLIDAT',
+  // 6: 'URGENTA',
+  // 7: 'NECLASIFICAT'
 };
 
 export async function initialize(): Promise<void> {
@@ -56,4 +57,18 @@ export function cleanNumber(input: string): number {
 
 export function cleanString(input: string): string {
   return _.trim(input.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' '));
+}
+
+export async function getGpsCoordinates(streetType: string, address: string, addressNumber: string) {
+  const geocoder = NodeGeocoder({
+    provider: 'mapquest',
+    apiKey: '***REMOVED***',
+    formatter: null,
+  });
+  const result = await geocoder.geocode({
+    address: `${streetType} ${address} ${addressNumber}`,
+    country: 'Romania',
+    city: 'Bucharest'
+  });
+  return result.length ? { latitude: result[0].latitude, longitude: result[0].longitude } : null;
 }
