@@ -47,6 +47,10 @@ export class CacheService {
     return this.redis.incr(id);
   }
 
+  public async reset(): Promise<void> {
+    await this.redis.flushall();
+  }
+
 }
 
 

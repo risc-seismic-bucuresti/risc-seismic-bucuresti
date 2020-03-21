@@ -63,6 +63,33 @@ export class DbService {
     }
   }
 
+  public async replaceDb(to: string, from: string) {
+    log.info(`Replacing database '${to}' with '${from}'...`);
+
+    const con = await this.connectDb('postgres');
+
+    try {
+      await con.query(`
+        SELECT 
+          pg_terminate_backend(pg_stat_activity.pid)
+        FROM 
+          pg_stat_activity
+        WHERE 
+          pg_stat_activity.datname = ${sql.escape(`${to}`)};
+      `);
+
+      await con.query(`DROP DATABASE IF EXISTS ${to};`);
+
+      await con.query(`ALTER DATABASE ${from} RENAME TO ${to};`);
+    } catch (err) {
+      log.info(`Unable to replace database '${to}' with '${from}': ${err}`);
+
+      throw err;
+    }
+
+    await con.end();
+  }
+
   private async createDb() {
     log.info(`Creating test database '${this.config.database}'...`);
 
