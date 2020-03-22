@@ -1,3 +1,6 @@
+// sentry
+import * as Sentry from '@sentry/node';
+
 // npm
 import * as _ from 'lodash';
 import * as NodeGeocoder from 'node-geocoder';
@@ -20,6 +23,8 @@ export const seismicDegrees = {
 };
 
 export async function initialize(): Promise<void> {
+  Sentry.init({ dsn: config.logs.sentryDsn });
+
   // Resetting db
   const dbConfig = _.clone(config.db);
   dbConfig.database += '_import';
