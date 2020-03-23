@@ -50,6 +50,7 @@ export const config = {
     level: process.env.LOGS_LEVEL || 'info',
     toFile: false,
     logsFileOutputDir: '',
+    sentryDsn: process.env.SENTRY_DSN || 'https://526b6933c6894124b0c864e500f7347e@sentry.io/5170881',
   },
 
   db: {
