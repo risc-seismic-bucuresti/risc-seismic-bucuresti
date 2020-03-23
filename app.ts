@@ -1,3 +1,6 @@
+// sentry
+import * as Sentry from '@sentry/node';
+
 // services
 import { CacheService, DbService, WebService } from './services/';
 
@@ -14,6 +17,7 @@ const dbService = new DbService(config.db);
 const webServer = new WebService({ web: config.web }, [routes]);
 
 (async () => {
+  Sentry.init({ dsn: config.logs.sentryDsn });
   await cacheService.initialize();
   await dbService.initialize();
   await webServer.listen();
