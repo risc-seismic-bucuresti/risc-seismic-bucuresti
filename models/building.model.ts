@@ -7,6 +7,10 @@ import { BuildingRating } from "./building-rating.model";
 
 @Table({
   tableName: 'buildings',
+  indexes: [
+    { fields: ['street_type', 'address', 'address_number'] },
+    { fields: ['gps_coordinates_latitude', 'gps_coordinates_longitude'] },
+  ],
 })
 export class Building extends EditableModel<Building> {
   @Column({ type: DataType.INTEGER, field: 'number', allowNull: false })
