@@ -20,5 +20,10 @@ export const config = {
       key: '/etc/letsencrypt/live/static.17.155.217.95.clients.your-server.de/privkey.pem',
       cert: '/etc/letsencrypt/live/static.17.155.217.95.clients.your-server.de/fullchain.pem',
     }
+  },
+  logs: {
+    toFile: true,
+    json: true,
+
   }
 };
