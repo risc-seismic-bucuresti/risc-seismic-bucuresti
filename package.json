@@ -6,13 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node node_modules/ts-node/dist/bin.js --ignore false app.ts",
-    "import": "node node_modules/ts-node/dist/bin.js --ignore false scripts/data-import.ts",
+    "import-csv": "node node_modules/ts-node/dist/bin.js --ignore false scripts/data-import-from-csv.ts",
+    "import-site": "node node_modules/ts-node/dist/bin.js --ignore false scripts/data-import-from-site.ts",
     "forever-start": "forever start  --minUptime 10000 --spinSleepTime 1000   node_modules/ts-node/dist/bin.js --ignore false app.ts",
     "forever-stop": "forever stop 0"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sentry/node": "^5.14.2",
     "async-redis": "^1.1.7",
     "chalk": "^3.0.0",
     "forever": "^2.0.0",
@@ -25,8 +27,11 @@
     "koa-validate": "^1.0.7",
     "lodash": "^4.17.15",
     "mkdirp": "^1.0.3",
+    "node-geocoder": "^3.25.1",
     "pg": "^7.18.2",
     "reflect-metadata": "^0.1.13",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.8",
     "sequelize": "^5.21.5",
     "sequelize-typescript": "^1.1.0",
     "ts-node": "^8.6.2",
@@ -36,6 +41,7 @@
   "devDependencies": {
     "@types/koa-router": "^7.4.0",
     "@types/node": "^13.7.6",
+    "dom-parser": "^0.1.6",
     "pdf-table-extractor": "^1.0.3"
   }
 }

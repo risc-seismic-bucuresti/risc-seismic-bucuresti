@@ -6,6 +6,7 @@ import { sql } from '../models';
 
 // services
 import { LogService as log } from './log.service';
+import { Sequelize } from 'sequelize';
 
 
 export interface IDbConfig {
@@ -26,7 +27,9 @@ export interface IDbConfig {
  * Manages the lifetime and initialization of the database.
  */
 export class DbService {
+  private sql: Sequelize;
   constructor(private config: IDbConfig) {
+    this.sql = sql(this.config);
   }
 
   public async initialize() {
@@ -35,7 +38,7 @@ export class DbService {
     }
 
     try {
-      await sql.authenticate();
+      await this.sql.authenticate();
     } catch (err) {
       log.error(`Unable to connect to '${this.config.host}': ${err}`);
 
@@ -47,20 +50,47 @@ export class DbService {
     if (this.config.manageDatabase) {
       log.info('Resetting the database...');
 
-      await sql.drop();
+      await this.sql.drop();
 
-      await sql.sync({ force: true });
+      await this.sql.sync({ force: true });
 
       log.info('Database setup done.');
     }
   }
 
   public async close() {
-    await sql.close();
+    await this.sql.close();
 
     if (this.config.manageDatabase) {
       await this.dropDb();
     }
+  }
+
+  public async replaceDb(to: string, from: string) {
+    log.info(`Replacing database '${to}' with '${from}'...`);
+
+    const con = await this.connectDb('postgres');
+
+    try {
+      await con.query(`
+        SELECT 
+          pg_terminate_backend(pg_stat_activity.pid)
+        FROM 
+          pg_stat_activity
+        WHERE 
+          pg_stat_activity.datname in (${this.sql.escape(`${to}`)}, ${this.sql.escape(`${from}`)});
+      `);
+
+      await con.query(`DROP DATABASE IF EXISTS ${to};`);
+
+      await con.query(`ALTER DATABASE ${from} RENAME TO ${to};`);
+    } catch (err) {
+      log.info(`Unable to replace database '${to}' with '${from}': ${err}`);
+
+      throw err;
+    }
+
+    await con.end();
   }
 
   private async createDb() {
