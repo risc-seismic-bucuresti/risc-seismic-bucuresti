@@ -56,11 +56,13 @@ async function resetCache() {
 }
 
 export function cleanNumber(input: string): number {
+  if (!input) return null;
   const n = parseInt(input.replace(/[.,\-]/gi, ''), 10);
   return isNaN(n) ? null : n
 }
 
 export function cleanString(input: string): string {
+  if (!input) return '';
   return _.trim(input.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' '));
 }
 
