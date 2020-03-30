@@ -2,7 +2,7 @@
 import * as crypto from 'crypto';
 import * as KoaRouter from 'koa-router';
 import * as _ from 'lodash';
-import { col, FindOptions, fn, Op, where } from 'sequelize';
+import { col, FindOptions, fn, literal, Op, where } from 'sequelize';
 
 // models
 import { Building, BuildingRating } from './models';
@@ -105,11 +105,16 @@ export class Routes extends KoaRouter {
     if (!data) {
       await cacheService.incrCache('db-calls');
       let addressArray = address.split(/\W/);
+      const order = [literal(`"address" <-> '${addressArray.join(' ')}' DESC`)];
       const whereClause = [
         where(fn('concat', col('street_type'), ' ', col('address')), { [Op.iLike]: `%${addressArray.join(' ')}%` }),
       ];
-      if (number) whereClause.push({ addressNumber: { [Op.iLike]: `%${number}%` } } as any);
+      if (number) {
+        whereClause.push({ addressNumber: { [Op.iLike]: `%${number}%` } } as any);
+        order.push(literal(`"address_number" <-> '${number}' DESC`));
+      }
       const defaultQueryOptions: FindOptions = {
+        order,
         where: {
           [Op.and]: whereClause,
         },
