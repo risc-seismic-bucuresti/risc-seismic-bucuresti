@@ -73,9 +73,7 @@ export async function getGpsCoordinates(streetType: string, address: string, add
     formatter: null,
   });
   const result = await geocoder.geocode({
-    address: `${streetType} ${address} ${addressNumber}`,
-    country: 'Romania',
-    city: 'Bucharest'
+    address: `${streetType} ${address} ${addressNumber}, Bucuresti, Romania`,
   });
   return result.length ? { latitude: result[0].latitude, longitude: result[0].longitude } : null;
 }
