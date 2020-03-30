@@ -70,6 +70,10 @@ export const config = {
     benchmark: false,
     ssl: null,
   },
+
+  maps: {
+    key: process.env.MAP_KEY || 'tP7lEh3HObNWPcGmIzG5SBgY8i9hDvcu'
+  }
 };
 
 if (process.env.NODE_ENV && process.env.NODE_ENV !== 'default') {
