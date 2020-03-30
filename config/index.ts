@@ -72,7 +72,7 @@ export const config = {
   },
 
   maps: {
-    key: process.env.MAP_KEY || 'tP7lEh3HObNWPcGmIzG5SBgY8i9hDvcu'
+    key: process.env.MAP_KEY || '1BGSjR27JJRbO29NgP8igCMDhSWerapA'
   }
 };
 

@@ -83,7 +83,7 @@ export async function getGpsCoordinates(streetType: string, address: string, add
     const sortedResult = _.sortBy(result, r => r.zipcode.split(',').length);
     return sortedResult.length ? { latitude: sortedResult[0].latitude, longitude: sortedResult[0].longitude } : null;
   } catch(e) {
-    log.error(e);
+    log.error(`Failed to get gps coordonates: ${e}`);
     return null;
   }
 }
