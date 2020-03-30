@@ -70,6 +70,10 @@ export const config = {
     benchmark: false,
     ssl: null,
   },
+
+  maps: {
+    key: process.env.MAP_KEY || '***REMOVED***'
+  }
 };
 
 if (process.env.NODE_ENV && process.env.NODE_ENV !== 'default') {
