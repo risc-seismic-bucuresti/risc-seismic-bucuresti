@@ -76,9 +76,14 @@ export async function getGpsCoordinates(streetType: string, address: string, add
     formatter: null,
   });
 
-  const result = await geocoder.geocode({
-    address: `${streetType} ${cleanedAddress} ${cleanedAddressNumber}, Bucuresti, Romania`,
-  });
-  const sortedResult = _.sortBy(result, r => r.zipcode.split(',').length);
-  return sortedResult.length ? { latitude: sortedResult[0].latitude, longitude: sortedResult[0].longitude } : null;
+  try {
+    const result = await geocoder.geocode({
+      address: `${streetType} ${cleanedAddress} ${cleanedAddressNumber}, Bucuresti, Romania`,
+    });
+    const sortedResult = _.sortBy(result, r => r.zipcode.split(',').length);
+    return sortedResult.length ? { latitude: sortedResult[0].latitude, longitude: sortedResult[0].longitude } : null;
+  } catch(e) {
+    log.error(e);
+    return null;
+  }
 }
