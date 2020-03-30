@@ -86,10 +86,8 @@ export class DbService {
 
       await con.query(`ALTER DATABASE ${from} RENAME TO ${to};`);
     } catch (err) {
-      if (err.code !== '42710') {
-        log.info(`Unable to replace database '${to}' with '${from}': ${err}`);
-        throw err;
-      }
+      log.info(`Unable to replace database '${to}' with '${from}': ${err}`);
+      throw err;
     }
 
     await con.end();
