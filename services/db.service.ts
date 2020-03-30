@@ -39,6 +39,7 @@ export class DbService {
 
     try {
       await this.sql.authenticate();
+      await this.sql.query('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
     } catch (err) {
       log.error(`Unable to connect to '${this.config.host}': ${err}`);
 
@@ -86,7 +87,6 @@ export class DbService {
       await con.query(`ALTER DATABASE ${from} RENAME TO ${to};`);
     } catch (err) {
       log.info(`Unable to replace database '${to}' with '${from}': ${err}`);
-
       throw err;
     }
 
@@ -135,6 +135,7 @@ export class DbService {
     });
 
     await con.connect();
+
     return con;
   }
 }
