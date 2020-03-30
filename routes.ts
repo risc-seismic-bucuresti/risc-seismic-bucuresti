@@ -105,13 +105,13 @@ export class Routes extends KoaRouter {
     if (!data) {
       await cacheService.incrCache('db-calls');
       let addressArray = address.split(/\W/);
-      const order = [literal(`"address" <-> '${addressArray.join(' ')}' DESC`)];
+      const order = [literal(`"address" <-> '${addressArray.join(' ')}'`)];
       const whereClause = [
         where(fn('concat', col('street_type'), ' ', col('address')), { [Op.iLike]: `%${addressArray.join(' ')}%` }),
       ];
       if (number) {
         whereClause.push({ addressNumber: { [Op.iLike]: `%${number}%` } } as any);
-        order.push(literal(`"address_number" <-> '${number}' DESC`));
+        order.push(literal(`"address_number" <-> '${number}'`));
       }
       const defaultQueryOptions: FindOptions = {
         order,
