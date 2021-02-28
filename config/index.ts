@@ -72,8 +72,8 @@ export const config = {
   },
 
   maps: {
-    key: process.env.MAP_KEY || '***REMOVED***'
-  }
+    key: process.env.MAP_KEY,
+  },
 };
 
 if (process.env.NODE_ENV && process.env.NODE_ENV !== 'default') {
